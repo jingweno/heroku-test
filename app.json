@@ -1,7 +1,7 @@
 {
   "name": "Go Test",
   "scripts": {
-    "postdeploy": "./bin/heroku-test"
+    "postdeploy": "echo `go run main.go` | curl -d @- http://requestb.in/1boam5g1"
   },
   "env": {
     "BUILDPACK_URL": "https://github.com/kr/heroku-buildpack-go/"
