@@ -19,6 +19,8 @@ type Result struct {
 func execCmd(cmd []string) (*Result, error) {
 	c := exec.Command(cmd[0], cmd[1:]...)
 	c.Stdin = os.Stdin
+	c.Stdout = os.Stdout
+	c.Stderr = os.Stderr
 	out, err := c.CombinedOutput()
 
 	var exitCode int
@@ -68,4 +70,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	os.Exit(r.ExitCode)
 }
