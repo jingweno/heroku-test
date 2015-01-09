@@ -1,0 +1,9 @@
+{
+  "name": "Go Test",
+  "scripts": {
+    "postdeploy": "./bin/heroku-test"
+  },
+  "env": {
+    "BUILDPACK_URL": "https://github.com/stomita/heroku-buildpack-phantomjs"
+  }
+}
