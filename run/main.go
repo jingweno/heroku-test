@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -13,18 +14,25 @@ import (
 type Result struct {
 	Output   string
 	ExitCode int
-	Error    error
 }
 
 func execCmd(cmd []string) (*Result, error) {
+	var b bytes.Buffer
+
 	c := exec.Command(cmd[0], cmd[1:]...)
 	c.Stdin = os.Stdin
-	c.Stdout = os.Stdout
-	c.Stderr = os.Stderr
-	out, err := c.CombinedOutput()
+	c.Stdout = &b
+	c.Stderr = &b
+	err := c.Run()
 
-	var exitCode int
-	if err != nil {
+	var (
+		out      string
+		exitCode int
+	)
+	if err == nil {
+		out = b.String()
+	} else {
+		out = err.Error()
 		exitCode = 1
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
@@ -34,8 +42,7 @@ func execCmd(cmd []string) (*Result, error) {
 	}
 
 	return &Result{
-		Output:   string(out),
-		Error:    err,
+		Output:   out,
 		ExitCode: exitCode,
 	}, nil
 }
@@ -71,5 +78,6 @@ func main() {
 		log.Fatal(err)
 	}
 
+	fmt.Print(r.Output)
 	os.Exit(r.ExitCode)
 }
